@@ -463,6 +463,15 @@ const app = {
                 authBtn.onclick = () => this.navigateTo('profile');
             }
         }
+    },
+
+    async bypassLogin() {
+        this.showLoading(true);
+        const res = await API.login('guest@example.com', 'bypass');
+        this.checkAuth();
+        this.showLoading(false);
+        this.navigateTo('dashboard');
+        this.updateDashboard();
     }
 };
 
