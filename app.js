@@ -20,7 +20,7 @@ const app = {
         if (toggle) toggle.checked = theme === 'dark';
 
         this.showLoading(false);
-        this.navigateTo('login');
+        this.navigateTo('dashboard');
     },
 
     setupEventListeners() {
@@ -368,12 +368,14 @@ const app = {
     },
 
     initProfileScreen() {
-        const db = DB.get();
-        const user = db ? db.currentUser : null;
+        let db = DB.get();
+        let user = db ? db.currentUser : null;
         if (!user) {
-            alert('Please login first');
-            this.navigateTo('login');
-            return;
+            user = { email: 'guest@example.com', name: 'Guest User', mobile: '', age: '', gender: 'Male', diabeticType: 'None', avatar: '' };
+            if (!db) db = {};
+            db.currentUser = user;
+            DB.save(db);
+            this.checkAuth();
         }
 
         // Set inputs
