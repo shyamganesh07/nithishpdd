@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yoga AI | Diabetic Wellness Pro</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4A90E2">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="light-mode">
+    <div id="loading-overlay" class="hidden">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Desktop Header -->
+    <header class="desktop-header">
+        <div class="container">
+            <div class="logo" onclick="app.navigateTo('landing')">
+                <i data-lucide="activity" class="logo-icon"></i>
+                <span>Yoga<span>AI</span></span>
+            </div>
+            <nav class="desktop-nav">
+                <a href="#" onclick="app.navigateTo('dashboard')">Dashboard</a>
+                <a href="#" onclick="app.navigateTo('library')">Library</a>
+                <a href="#" onclick="app.navigateTo('health')">Health</a>
+                <a href="#" onclick="app.navigateTo('analytics')">Analytics</a>
+                <button id="auth-btn" class="btn btn-primary" onclick="app.navigateTo('login')">Sign In</button>
+                <button id="theme-toggle" class="icon-btn"><i data-lucide="moon"></i></button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="screen-container">
+        <!-- Landing Screen -->
+        <section id="screen-landing" class="screen">
+            <div class="hero-section container">
+                <div class="hero-content">
+                    <span class="badge">Advanced AI Wellness</span>
+                    <h1>Smart Yoga Posture Correction for <span>Diabetic Health</span></h1>
+                    <p>Real-time AI feedback tailored for diabetic wellness. Prevent injuries, track vitals, and improve your health with every pose.</p>
+                    <div class="hero-btns">
+                        <button class="btn btn-primary btn-lg" onclick="app.navigateTo('signup')">Get Started Now</button>
+                        <button class="btn btn-outline btn-lg">Explore Library</button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="glass-card main-viz">
+                        <div class="viz-header">
+                            <span class="viz-dot"></span> AI Active
+                        </div>
+                        <canvas id="hero-canvas"></canvas>
+                        <div class="viz-overlay">
+                            <div class="accuracy-indicator">98% Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Auth Screens -->
+        <section id="screen-login" class="screen active">
+            <div class="auth-box">
+                <div class="auth-card">
+                    <div id="login-step-1">
+                        <h2>Welcome Back</h2>
+                        <p>Sign in with your email to receive an OTP</p>
+                        <form id="request-otp-form">
+                            <div class="input-group">
+                                <label>Email Address</label>
+                                <input type="email" id="login-email" placeholder="nithish@example.com" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Send OTP</button>
+                        </form>
+                    </div>
+
+                    <div id="login-step-2" class="hidden">
+                        <h2>Verify Email</h2>
+                        <p>We've sent a 4-digit code to your email</p>
+                        <div class="otp-container">
+                            <input type="text" maxlength="1" class="otp-input" data-index="0">
+                            <input type="text" maxlength="1" class="otp-input" data-index="1">
+                            <input type="text" maxlength="1" class="otp-input" data-index="2">
+                            <input type="text" maxlength="1" class="otp-input" data-index="3">
+                        </div>
+                        <button id="verify-otp-btn" class="btn btn-primary btn-block mt-4">Verify & Login</button>
+                        <p class="auth-switch"><a href="#" onclick="app.showLoginStep(1)">Change Email</a></p>
+                    </div>
+                    
+                    <p class="auth-switch">New here? <a href="#" onclick="app.navigateTo('signup')">Create Account</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Screen -->
+        <section id="screen-dashboard" class="screen">
+            <div class="container py-4">
+                <div class="dash-header">
+                    <h1>Dashboard</h1>
+                    <button class="btn btn-primary" onclick="app.navigateTo('camera', 'Tadasana')">
+                        <i data-lucide="play"></i> Start Session
+                    </button>
+                </div>
+                
+                <div class="dash-grid">
+                    <div class="card glass wellness-card">
+                        <h3>Daily Wellness</h3>
+                        <div class="streak-box">
+                            <span class="streak-val" id="dash-streak">0</span>
+                            <span class="streak-label">Day Streak! 🔥</span>
+                        </div>
+                        <div class="mini-stats">
+                            <div class="m-stat">
+                                <span class="m-label">Hydration</span>
+                                <span class="m-val" id="dash-hydration">0L</span>
+                            </div>
+                            <div class="m-stat">
+                                <span class="m-label">Steps</span>
+                                <span class="m-val" id="dash-steps">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card alert-card">
+                        <h3><i data-lucide="bell" class="icon-alert"></i> Health Reminder</h3>
+                        <p id="health-tip">Check your blood sugar before starting the Surya Namaskar session.</p>
+                    </div>
+
+                    <div class="card pose-card">
+                        <h3>Recommended Pose</h3>
+                        <div class="pose-rec">
+                            <div class="pose-info">
+                                <h4>Vajrasana</h4>
+                                <p>Great for post-meal wellness.</p>
+                                <button class="btn btn-sm btn-secondary" onclick="app.navigateTo('camera', 'Vajrasana')">Start Practice</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Camera Screen -->
+        <section id="screen-camera" class="screen">
+            <div class="ai-session">
+                <div class="camera-viewport">
+                    <canvas id="camera-canvas"></canvas>
+                    <div id="youtube-player-container" class="hidden">
+                        <iframe id="youtube-player" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        <div id="video-watermark-cover" class="hidden"></div>
+                    </div>
+                    <div class="ai-badge" id="ai-status">Scanning...</div>
+                </div>
+                <div class="ai-feedback-container">
+                    <div class="feedback-text" id="ai-instruction">Align your body within the frame</div>
+                    <div class="accuracy-meter">
+                        <div class="meter-fill" id="accuracy-fill"></div>
+                    </div>
+                    <div class="session-controls">
+                        <button class="icon-btn" onclick="app.navigateTo('dashboard')"><i data-lucide="x"></i></button>
+                        <button class="btn btn-primary" id="session-btn">Start Session</button>
+                        <button class="icon-btn"><i data-lucide="settings"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Library Screen -->
+        <section id="screen-library" class="screen">
+            <div class="container py-4">
+                <div class="section-header">
+                    <h2>Yoga Pose Library</h2>
+                    <p>Diabetic-friendly poses selected for wellness.</p>
+                </div>
+                <div class="library-grid" id="library-grid">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Health Monitoring Screen -->
+        <section id="screen-health" class="screen">
+            <div class="container py-4">
+                <h2>Health Monitoring</h2>
+                <div class="health-overview">
+                    <div class="card glass health-stat">
+                        <i data-lucide="droplet"></i>
+                        <h4>Water Intake</h4>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="water-bar"></div>
+                        </div>
+                        <p id="water-text">1.5L / 2L</p>
+                        <button class="btn btn-sm btn-outline" onclick="app.addWater()">+ Add 250ml</button>
+                    </div>
+                    <div class="card glass health-stat">
+                        <i data-lucide="calculator"></i>
+                        <h4>BMI Calculator</h4>
+                        <div class="bmi-form">
+                            <input type="number" id="bmi-weight" placeholder="Weight (kg)">
+                            <input type="number" id="bmi-height" placeholder="Height (cm)">
+                            <button class="btn btn-sm btn-primary" onclick="app.calcBMI()">Calculate</button>
+                        </div>
+                        <p id="bmi-result"></p>
+                    </div>
+                </div>
+                <div class="history-section mt-4">
+                    <h3>Wellness History</h3>
+                    <div class="table-container">
+                        <table id="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Pose</th>
+                                    <th>Duration</th>
+                                    <th>Accuracy</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Screen -->
+        <section id="screen-analytics" class="screen">
+            <div class="container py-4">
+                <h2>Performance Analytics</h2>
+                <div class="analytics-grid">
+                    <div class="card main-chart-card">
+                        <h3>Weekly Yoga Consistency</h3>
+                        <div class="chart-container" id="consistency-chart">
+                            <!-- SVG Chart will be injected here -->
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <h3>Posture Accuracy Trend</h3>
+                        <div class="chart-container" id="accuracy-chart"></div>
+                    </div>
+                </div>
+                <div class="ai-insights card glass mt-4">
+                    <h3><i data-lucide="sparkles"></i> AI Wellness Insights</h3>
+                    <p id="ai-insight-text">Analyzing your data...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Screen -->
+        <section id="screen-settings" class="screen">
+            <div class="container py-4">
+                <h2>Settings</h2>
+                <div class="settings-list">
+                    <div class="settings-item" onclick="app.navigateTo('profile')">
+                        <div class="info">
+                            <i data-lucide="user"></i>
+                            <span>Profile</span>
+                        </div>
+                        <i data-lucide="chevron-right"></i>
+                    </div>
+                    <div class="settings-item">
+                        <div class="info">
+                            <i data-lucide="moon"></i>
+                            <span>Dark Mode</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="dark-mode-toggle" onchange="app.toggleDarkMode()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="settings-item">
+                        <div class="info">
+                            <i data-lucide="camera"></i>
+                            <span>Camera Permissions</span>
+                        </div>
+                        <span class="status success">Granted</span>
+                    </div>
+                    <div class="settings-item danger" onclick="app.navigateTo('landing')">
+                        <div class="info">
+                            <i data-lucide="log-out"></i>
+                            <span>Logout</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Screen -->
+        <section id="screen-profile" class="screen">
+            <div class="container py-4">
+                <div class="profile-header">
+                    <button class="icon-btn" onclick="app.navigateTo('settings')"><i data-lucide="arrow-left"></i></button>
+                    <h2>Edit Profile</h2>
+                </div>
+                
+                <div class="card glass profile-card mt-4">
+                    <form id="profile-form">
+                        <!-- Avatar Section -->
+                        <div class="avatar-upload-container">
+                            <div class="avatar-wrapper" onclick="document.getElementById('profile-pic-input').click()">
+                                <img id="profile-avatar-preview" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150" alt="Avatar">
+                                <div class="avatar-overlay">
+                                    <i data-lucide="camera"></i>
+                                </div>
+                            </div>
+                            <input type="file" id="profile-pic-input" accept="image/png, image/jpeg, image/jpg" class="hidden">
+                            <p class="upload-tip">Click to upload photo (.png, .jpg)</p>
+                        </div>
+
+                        <!-- Form Inputs -->
+                        <div class="profile-form-grid">
+                            <div class="input-group">
+                                <label>Gmail Address (Logged In)</label>
+                                <input type="email" id="profile-email" readonly class="readonly-input">
+                            </div>
+                            <div class="input-group">
+                                <label>Full Name</label>
+                                <input type="text" id="profile-name" placeholder="John Doe" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Mobile Number</label>
+                                <input type="tel" id="profile-mobile" placeholder="+1 234 567 8900" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Age</label>
+                                <input type="number" id="profile-age" placeholder="30" min="1" max="120" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Gender</label>
+                                <select id="profile-gender" class="select-input">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Diabetic Type</label>
+                                <select id="profile-diabetic" class="select-input">
+                                    <option value="Type 1">Type 1</option>
+                                    <option value="Type 2">Type 2</option>
+                                    <option value="Pre-diabetic">Pre-diabetic</option>
+                                    <option value="None">None</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-actions mt-4">
+                            <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Mobile Nav -->
+    <nav class="mobile-nav">
+        <a href="#" onclick="app.navigateTo('dashboard')" class="nav-item" id="nav-dashboard">
+            <i data-lucide="layout"></i>
+            <span>Dash</span>
+        </a>
+        <a href="#" onclick="app.navigateTo('library')" class="nav-item" id="nav-library">
+            <i data-lucide="book-open"></i>
+            <span>Library</span>
+        </a>
+        <a href="#" onclick="app.navigateTo('camera', 'Tadasana')" class="nav-item center" id="nav-camera-btn">
+            <div class="action-circle"><i data-lucide="camera"></i></div>
+        </a>
+        <a href="#" onclick="app.navigateTo('health')" class="nav-item" id="nav-health">
+            <i data-lucide="heart"></i>
+            <span>Health</span>
+        </a>
+        <a href="#" onclick="app.navigateTo('settings')" class="nav-item" id="nav-settings">
+            <i data-lucide="settings"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
