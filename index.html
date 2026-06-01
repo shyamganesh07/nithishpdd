@@ -29,7 +29,7 @@
                 <a href="#" onclick="app.navigateTo('library')">Library</a>
                 <a href="#" onclick="app.navigateTo('health')">Health</a>
                 <a href="#" onclick="app.navigateTo('analytics')">Analytics</a>
-                <button id="auth-btn" class="btn btn-primary" onclick="app.navigateTo('login')">Sign In</button>
+                <button id="profile-btn" class="btn btn-primary" onclick="app.navigateTo('profile')">Profile</button>
                 <button id="theme-toggle" class="icon-btn"><i data-lucide="moon"></i></button>
             </nav>
         </div>
@@ -44,8 +44,8 @@
                     <h1>Smart Yoga Posture Correction for <span>Diabetic Health</span></h1>
                     <p>Real-time AI feedback tailored for diabetic wellness. Prevent injuries, track vitals, and improve your health with every pose.</p>
                     <div class="hero-btns">
-                        <button class="btn btn-primary btn-lg" onclick="app.navigateTo('signup')">Get Started Now</button>
-                        <button class="btn btn-outline btn-lg">Explore Library</button>
+                        <button class="btn btn-primary btn-lg" onclick="app.navigateTo('dashboard')">Get Started Now</button>
+                        <button class="btn btn-outline btn-lg" onclick="app.navigateTo('library')">Explore Library</button>
                     </div>
                 </div>
                 <div class="hero-visual">
@@ -62,43 +62,8 @@
             </div>
         </section>
 
-        <!-- Auth Screens -->
-        <section id="screen-login" class="screen active">
-            <div class="auth-box">
-                <div class="auth-card">
-                    <div id="login-step-1">
-                        <h2>Welcome Back</h2>
-                        <p>Sign in with your email to receive an OTP</p>
-                        <form id="request-otp-form">
-                            <div class="input-group">
-                                <label>Email Address</label>
-                                <input type="email" id="login-email" placeholder="nithish@example.com" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Send OTP</button>
-                            <button type="button" class="btn btn-outline btn-block" style="margin-top: 12px;" onclick="app.bypassLogin()">Quick Bypass (Guest Login)</button>
-                        </form>
-                    </div>
-
-                    <div id="login-step-2" class="hidden">
-                        <h2>Verify Email</h2>
-                        <p>We've sent a 4-digit code to your email</p>
-                        <div class="otp-container">
-                            <input type="text" maxlength="1" class="otp-input" data-index="0">
-                            <input type="text" maxlength="1" class="otp-input" data-index="1">
-                            <input type="text" maxlength="1" class="otp-input" data-index="2">
-                            <input type="text" maxlength="1" class="otp-input" data-index="3">
-                        </div>
-                        <button id="verify-otp-btn" class="btn btn-primary btn-block mt-4">Verify & Login</button>
-                        <p class="auth-switch"><a href="#" onclick="app.showLoginStep(1)">Change Email</a></p>
-                    </div>
-                    
-                    <p class="auth-switch">New here? <a href="#" onclick="app.navigateTo('signup')">Create Account</a></p>
-                </div>
-            </div>
-        </section>
-
         <!-- Dashboard Screen -->
-        <section id="screen-dashboard" class="screen">
+        <section id="screen-dashboard" class="screen active">
             <div class="container py-4">
                 <div class="dash-header">
                     <h1>Dashboard</h1>
@@ -281,11 +246,6 @@
                         </div>
                         <span class="status success">Granted</span>
                     </div>
-                    <div class="settings-item danger" onclick="app.navigateTo('landing')">
-                        <div class="info">
-                            <i data-lucide="log-out"></i>
-                            <span>Logout</span>
-                        </div>
                     </div>
                 </div>
             </div>

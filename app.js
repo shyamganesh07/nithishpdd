@@ -6,7 +6,6 @@ const app = {
     async init() {
         lucide.createIcons();
         this.setupEventListeners();
-        this.checkAuth();
         this.updateDashboard();
         this.initHeroViz();
         this.renderLibrary();
@@ -27,62 +26,11 @@ const app = {
     },
 
     setupEventListeners() {
-        // OTP Request
-        const requestOtpForm = document.getElementById('request-otp-form');
-        if (requestOtpForm) {
-            requestOtpForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                this.showLoading(true);
-                // Simulate sending OTP
-                await API.delay(1000);
-                this.showLoading(false);
-                this.showLoginStep(2);
-            });
-        }
-
-        // OTP Verification
-        const verifyOtpBtn = document.getElementById('verify-otp-btn');
-        if (verifyOtpBtn) {
-            verifyOtpBtn.onclick = async () => {
-                const otp = Array.from(document.querySelectorAll('.otp-input')).map(i => i.value).join('');
-                if (otp.length === 4) {
-                    this.showLoading(true);
-                    await API.login(document.getElementById('login-email').value, 'otp-logic');
-                    this.checkAuth();
-                    this.showLoading(false);
-                    this.navigateTo('dashboard');
-                    this.updateDashboard();
-                } else {
-                    alert('Please enter a valid 4-digit OTP');
-                }
-            };
-        }
-
-        // OTP Input Auto-focus
-        document.querySelectorAll('.otp-input').forEach((input, idx, inputs) => {
-            input.addEventListener('input', (e) => {
-                if (e.target.value && idx < inputs.length - 1) {
-                    inputs[idx + 1].focus();
-                }
-            });
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && idx > 0) {
-                    inputs[idx - 1].focus();
-                }
-            });
-        });
-
         // Theme toggle from desktop header
         const themeBtn = document.getElementById('theme-toggle');
         if (themeBtn) {
             themeBtn.onclick = () => this.toggleDarkMode();
         }
-    },
-
-    showLoginStep(step) {
-        document.getElementById('login-step-1').classList.toggle('hidden', step !== 1);
-        document.getElementById('login-step-2').classList.toggle('hidden', step !== 2);
     },
 
     navigateTo(screenId, poseName) {
@@ -109,51 +57,25 @@ const app = {
             this.stopYoutubePlayer();
             if (screenId === 'analytics') this.renderAnalytics();
             else if (screenId === 'health') this.renderHistory();
-            
-            if (screenId === 'landing') {
-                const dbData = DB.get();
-                if (dbData) {
-                    dbData.currentUser = null;
-                    DB.save(dbData);
-                }
-                const authBtn = document.getElementById('auth-btn');
-                if (authBtn) {
-                    authBtn.innerText = 'Sign In';
-                    authBtn.onclick = () => this.navigateTo('login');
-                }
-            }
         }
 
         window.scrollTo(0, 0);
         lucide.createIcons();
 
         // Toggle navbars based on screen
-        const isAuth = ['landing', 'login', 'signup'].includes(screenId);
         const desktopHeader = document.querySelector('.desktop-header');
         const mobileNav = document.querySelector('.mobile-nav');
         
         if (desktopHeader) {
-            desktopHeader.style.display = (isAuth && screenId !== 'landing') ? 'none' : (window.innerWidth > 768 ? 'flex' : 'none');
-            // Show header on landing (web) but hide on login/signup
-            if (screenId === 'landing' && window.innerWidth > 768) desktopHeader.style.display = 'flex';
-            else if (['login', 'signup'].includes(screenId)) desktopHeader.style.display = 'none';
+            desktopHeader.style.display = window.innerWidth > 768 ? 'flex' : 'none';
         }
         
         if (mobileNav) {
-            mobileNav.style.display = isAuth ? 'none' : (window.innerWidth <= 768 ? 'flex' : 'none');
+            mobileNav.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
         }
     },
 
-    async handleLogin(email, pass) {
-        this.showLoading(true);
-        const res = await API.login(email, pass);
-        this.showLoading(false);
-        if (res.success) {
-            this.checkAuth();
-            this.navigateTo('dashboard');
-            this.updateDashboard();
-        }
-    },
+
 
     async updateDashboard() {
         const stats = await API.getWellnessStats();
@@ -378,7 +300,6 @@ const app = {
             if (!db) db = {};
             db.currentUser = user;
             DB.save(db);
-            this.checkAuth();
         }
 
         // Set inputs
@@ -431,7 +352,6 @@ const app = {
                 DB.save(dbData);
                 
                 alert('Profile saved successfully!');
-                this.checkAuth(); // Update header name if it changed!
                 this.navigateTo('dashboard');
             };
         }
@@ -461,25 +381,7 @@ const app = {
         else overlay.classList.add('hidden');
     },
 
-    checkAuth() {
-        const db = DB.get();
-        if (db && db.currentUser) {
-            const authBtn = document.getElementById('auth-btn');
-            if (authBtn) {
-                authBtn.innerText = 'Profile';
-                authBtn.onclick = () => this.navigateTo('profile');
-            }
-        }
-    },
 
-    async bypassLogin() {
-        this.showLoading(true);
-        const res = await API.login('guest@example.com', 'bypass');
-        this.checkAuth();
-        this.showLoading(false);
-        this.navigateTo('dashboard');
-        this.updateDashboard();
-    }
 };
 
 window.app = app;
