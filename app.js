@@ -14,7 +14,10 @@ const app = {
         this.renderAnalytics();
         
         // Handle dark mode
-        const theme = localStorage.getItem('theme') || 'light';
+        let theme = 'light';
+        try {
+            theme = localStorage.getItem('theme') || 'light';
+        } catch (e) {}
         document.body.setAttribute('data-theme', theme);
         const toggle = document.getElementById('dark-mode-toggle');
         if (toggle) toggle.checked = theme === 'dark';
@@ -438,7 +441,9 @@ const app = {
         const current = document.body.getAttribute('data-theme');
         const next = current === 'light' ? 'dark' : 'light';
         document.body.setAttribute('data-theme', next);
-        localStorage.setItem('theme', next);
+        try {
+            localStorage.setItem('theme', next);
+        } catch (e) {}
         
         const toggle = document.getElementById('dark-mode-toggle');
         if (toggle) toggle.checked = next === 'dark';
